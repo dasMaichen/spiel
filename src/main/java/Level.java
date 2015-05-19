@@ -1,3 +1,6 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.awt.*;
 
 /**
@@ -19,18 +22,18 @@ public class Level {
             + "#.#.###B.BZ\n"
             + "#S#..O#....";
 
-    public final Field[][] fieldMatrix;
+    public final FieldTypes[][] fieldMatrix;
 
     public Level(char[][] fieldMatrixData) {
-        this.fieldMatrix = new Field[fieldMatrixData.length][];
+        this.fieldMatrix = new FieldTypes[fieldMatrixData.length][];
 
         for (int i = 0; i < fieldMatrixData.length; i++){
-            this.fieldMatrix[i]=new Field[fieldMatrixData[i].length];
+            this.fieldMatrix[i]=new FieldTypes[fieldMatrixData[i].length];
                 for (int j = 0; j < fieldMatrixData[i].length; j++) {
 
                     char element = fieldMatrixData[i][j];
 
-                    for (Field fieldType: FieldTypes.values()){
+                    for (FieldTypes fieldType: FieldTypes.values()){
                         if (element == fieldType.toString().charAt(0)){
                             this.fieldMatrix[i][j] = fieldType;
                             break;
@@ -57,7 +60,13 @@ public class Level {
             fieldMatrix[i] = levelFileLines[i].toCharArray();
         }
 
-        return new Level(fieldMatrix);
+        Level level = new Level(fieldMatrix);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        for (FieldTypes fieldType : FieldTypes.values()) {
+            gsonBuilder.registerTypeAdapter(fieldType.getClass(), FieldTypes.SERIALIZER);
+        }
+        System.out.println(gsonBuilder.create().toJson(level));
+        return level;
     }
 
     @Override
@@ -86,7 +95,7 @@ public class Level {
             return false;
         }
 
-        Field field = fieldMatrix[point.y][point.x];
+        FieldTypes field = fieldMatrix[point.y][point.x];
 
         if (field.isPassable()==true) {
             return true;
@@ -101,7 +110,7 @@ public class Level {
     public Point findStartPoint (){
         for (int i = 0; i < fieldMatrix.length; i++) {
             for (int j = 0; j < fieldMatrix[i].length; j++) {
-                Field element = fieldMatrix[i][j];
+                FieldTypes element = fieldMatrix[i][j];
 
                 if (element == FieldTypes.STARTING_FIELD){
                     return new Point(j,i);
@@ -137,7 +146,7 @@ public class Level {
     public Point findGoalPoint (){
         for (int i = 0; i < fieldMatrix.length; i++) {
             for (int j = 0; j < fieldMatrix[i].length; j++) {
-                Field element = fieldMatrix[i][j];
+                FieldTypes element = fieldMatrix[i][j];
 
                 if (element == FieldTypes.GOAL_FIELD){
                     return new Point(j,i);

@@ -1,13 +1,14 @@
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
 
-public enum FieldTypes implements Field {
+public enum FieldTypes{
 
 
     EMPTY_FIELD {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
 
         @Override
         public void action(Player player) {
@@ -20,25 +21,8 @@ public enum FieldTypes implements Field {
     },
 
 
-//    EINGANG {
-//
-//        public boolean isPassable() {return true;}
-//
-//        public void action (Level level){
-//
-//        }
-//
-//        public String toString() {return "E";}
-//
-//    },
-
-
 
     BATTLE_FIELD {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
 
         @Override
         public void action(Player player) {
@@ -53,10 +37,6 @@ public enum FieldTypes implements Field {
 
 
     FORGE {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
 
         @Override
         public void action(Player player) {
@@ -71,10 +51,6 @@ public enum FieldTypes implements Field {
 
 
     FOUNTAIN {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
 
         @Override
         public void action(Player player) {
@@ -92,10 +68,6 @@ public enum FieldTypes implements Field {
 
 
     GOAL_FIELD {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
 
         @Override
         public void action(Player player) {
@@ -149,10 +121,6 @@ public enum FieldTypes implements Field {
 
 
     PLAYER_POSITION {
-        @Override
-        public boolean isPassable() {
-            return false;
-        }
 
         @Override
         public void action(Player player) {
@@ -168,10 +136,7 @@ public enum FieldTypes implements Field {
 
 
     STARTING_FIELD {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
+
 
         @Override
         public void action(Player player) {
@@ -186,16 +151,12 @@ public enum FieldTypes implements Field {
 
 
     CHEST_FIELD {
-        @Override
-        public boolean isPassable() {
-            return true;
-        }
+
 
         @Override
         public void action(Player player) {
             System.out.println("Du öffnest eine Truhe.\n Du hast 2 Tränke erhalten");
             player.remainingItemUses = player.remainingItemUses +2;
-
         }
 
         @Override
@@ -203,4 +164,19 @@ public enum FieldTypes implements Field {
             return "K";
         }
     };
+
+
+    public static final JsonSerializer<FieldTypes> SERIALIZER = new JsonSerializer<FieldTypes>() {
+        @Override
+        public JsonElement serialize(FieldTypes src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.toString());
+        }
+    };
+
+
+    public boolean isPassable(){
+        return true;
+    }
+
+    abstract void action(Player player);
 }
